@@ -1,5 +1,7 @@
 # cuub
 
+Code to reproduce experiments from the paper [TODO](...).
+
 Execute the following to download the data from [here](https://www.cs.ubc.ca/~drgraham/datasets.html) and unpack it into a folder named `icar/`:
 ```
 mkdir icar
