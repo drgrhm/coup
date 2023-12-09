@@ -12,7 +12,7 @@ Set up directories:
 mkdir dat img
 ```
 
-Duplicate the experiments from UP paper [...], comparing to CUUB (Figure ...):
+Compare CUUB to UP and the Naive procedure by duplicating the experiments from [Graham et al., 2023](https://arxiv.org/abs/2310.20401) (Figure ...):
 ```
 python up_experiment.py [minisat | cplex_rcw | cplex_region] [seed]
 ```
