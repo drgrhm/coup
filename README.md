@@ -23,3 +23,5 @@ Compare the total time spent by CUUB and UP on each configuration (Figure ...):
 ```
 python total_time_experiment.py [minisat | cplex_rcw | cplex_region] [seed = {9858}]
 ```
+
+
