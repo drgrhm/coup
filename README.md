@@ -16,7 +16,7 @@ Set up directories:
 mkdir dat img
 ```
 
-## Comparison with UP - finitely many configurations
+## The Case of Few Configurations -- Comparison with UP
 
 Compare CUUB to UP and the Naive procedure by duplicating the experiments from [Graham et al., 2023](https://arxiv.org/abs/2310.20401) (Figure ...):
 ```
@@ -28,4 +28,4 @@ Compare the total time spent by CUUB and UP on each configuration (Figure ...):
 python total_time_experiment.py [minisat | cplex_rcw | cplex_region] [seed = {9858}]
 ```
 
-
+## The Case of Many Configurations
