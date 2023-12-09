@@ -2,6 +2,8 @@
 
 Code to reproduce experiments from the paper [TODO](...).
 
+## Setup
+
 Execute the following to download the data from [here](https://www.cs.ubc.ca/~drgraham/datasets.html) and unpack it into a folder named `icar/`:
 ```
 mkdir icar
@@ -13,6 +15,8 @@ Set up directories:
 ```
 mkdir dat img
 ```
+
+## Comparison with UP - finitely many configurations
 
 Compare CUUB to UP and the Naive procedure by duplicating the experiments from [Graham et al., 2023](https://arxiv.org/abs/2310.20401) (Figure ...):
 ```
