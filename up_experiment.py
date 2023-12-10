@@ -78,9 +78,9 @@ except FileNotFoundError:
 
 
 for u in utility_functions:
-    u_str = u_to_str(u)
-    plt.scatter(data[u_str]['utilities'], data[u_str]['out_cuub']['total_times_by_config'][-1], label=r"CUUB", c=colors[2])
+    u_str = u_to_str(u)    
     plt.scatter(data[u_str]['utilities'], data[u_str]['out_up']['total_times_by_config'][-1], label=r"UP", c=colors[5])
+    plt.scatter(data[u_str]['utilities'], data[u_str]['out_cuub']['total_times_by_config'][-1], label=r"CUUB", c=colors[2])
     plt.yscale('log')
     plt.ylim(1e3, 1e7)
     plt.legend(loc='upper left')
