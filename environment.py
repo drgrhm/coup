@@ -41,6 +41,10 @@ class Environment():
     def get_time_spent_running_all(self):
         return sum(self._total_time)
 
+    def get_true_runtimes(self, n, m):
+        """ return the runtime of the first n configs on the first m instances """
+        return self._runtimes[:n, :m]
+
     def run(self, i, j, k):
         """ run configuration i on instance j with captime k """
         assert k <= self._max_timeout, "ERROR: captime k={} is greater than max for dataset".format(k)
@@ -68,15 +72,7 @@ class LBEnvironment(Environment):
         Environment.__init__(self, None, max_timeout)
 
 
-class SampledEnvironment(Environment):
-
-    def __init__(self, data_file, max_timeout, num_configs):
-        self._config_ids = np.random.permutation(self._runtimes.shape[0])[:num_configs]
-        self._runtimes = np.load(data_file)[self._config_ids, :]
-        Environment.__init__(self, None, max_timeout)
-
-
-class SimulatedEnvironment():
+class SyntheticEnvironment():
 
     def __init__(self):
         self.reset_all()
@@ -89,13 +85,13 @@ class SimulatedEnvironment():
         self._pending = {} # self._pending[i][j] = t if i timed out the last time it was run on j
         self._sample_fn = {} 
         self._params = {}
-        self._instance_multiplier = {}
+        self._instance_param = {}
 
     def reset(self): # only reset time spent, not configs/instances themselves
         self._total_time = {}
         for i in self._active_configs:
             self._total_time[i] = 0
-            self._pending[i].update(self._completed[i])
+            self._pending[i].update(self._completed[i]) # move completed instances back to pending
             self._completed[i] = {}
 
     def get_time_spent_running(self, i):
@@ -107,12 +103,25 @@ class SimulatedEnvironment():
     def get_time_spent_running_all(self):
         return sum(self._total_time.values())
 
+
+    def get_true_runtimes(self, n, m):
+        """ return the runtime of the first n configs on the first m instances 
+            * Warning: the env is completely reset after calling this * """
+        runtimes = np.zeros((n, m))
+        for i in range(n):
+            # print("generating runtimes for i = {}".format(i))
+            for j in range(m):
+                runtimes[i, j] = self.run(i, j, float('inf'))
+        self.reset_all() # reset time spent
+        return runtimes
+
+
     def run(self, i, j, k):
         """ run configuration i on instance j with captime k """
         
         if i not in self._active_configs: # new config, initialize values
-            mu = np.random.lognormal(.5, 1)
-            sig = np.random.lognormal(0, .25)
+            mu = np.random.lognormal(1, .5)
+            sig = np.random.lognormal(-1, .25)
             self._params[i] = {'mu': mu, 'sig': sig}
             self._sample_fn[i] = lambda x: np.random.lognormal(x + mu, sig)
             self._completed[i] = {}
@@ -121,7 +130,7 @@ class SimulatedEnvironment():
             self._active_configs[i] = True
 
         if j not in self._active_instances: # new instance 
-            self._instance_multiplier[j] = np.random.lognormal(.5, 1)
+            self._instance_param[j] = np.random.lognormal(1, .5)
             self._active_instances[j] = True
 
         if j in self._completed[i]: # already completed this instance, no need to run again or do runtime accounting
@@ -130,7 +139,7 @@ class SimulatedEnvironment():
             if j in self._pending[i]: # ran i on j before and timed out
                 t = self._pending[i][j]
             else: # new instance for config i
-                t = self._sample_fn[i](self._instance_multiplier[j]) # sample new runtime value 
+                t = self._sample_fn[i](self._instance_param[j]) # sample new runtime value 
                 self._pending[i][j] = t # save sampled runtime value
 
             if t < k:  # completed the run
