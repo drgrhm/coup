@@ -29,3 +29,16 @@ python total_time_experiment.py [minisat | cplex_rcw | cplex_region] [seed = {98
 ```
 
 ## The Case of Many Configurations
+
+Compare the many-configuration version of to the few-configuration version (Figure ...):
+```
+python many_experiment.py [minisat | cplex_rcw | cplex_region | synthetic] [seed = {9858}]
+```
+
+## Synthetic Data 
+
+....
+```
+python synthetic_demo.py
+```
+
