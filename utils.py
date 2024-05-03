@@ -1,3 +1,4 @@
+import os
 import math
 import numpy as np
 import matplotlib.pyplot as plt
@@ -89,6 +90,12 @@ def u_backward(t, k0, k1, a):
         return 1
     if k0 < t and t < k1:
         return 1 - ((t - k0) / (k1 - k0)) ** (1/a)
+    else:
+        return 0
+
+def u_step(t, k0):
+    if t < k0:
+        return 1
     else:
         return 0
 
@@ -222,6 +229,18 @@ def ecdf(data):
     return x, y
 
 
+def auc(times, epsilons):
+    """ Area under the time-epsilon curve """
+    times = [0] + list(times)
+    epsilons = [1] + list(epsilons)
+    lower = 0
+    upper = 0
+    for i in range(1, len(times)):
+        lower += (times[i] - times[i-1]) * epsilons[i]
+        upper += (times[i] - times[i-1]) * epsilons[i - 1]
+    return lower, upper
+
+
 def u_to_str(utility_function):
     """ return a nice string representation of a utility function and its parameters """
     u_fn, u_params = utility_function
@@ -230,6 +249,21 @@ def u_to_str(utility_function):
     else:
         param_str = ",".join("{}".format(v) for v in u_params)
     return "{}(".format(u_fn.__name__) + param_str + ")"
+
+
+def u_to_latex(utility_function, params_only=False):
+    """ return a latex string representation of a utility function and its parameters """
+    u_fn, u_params = utility_function
+    if params_only:
+        out = "$("        
+    else:
+        out = "$u_{" + u_fn.__name__.split("_")[1] + "}("
+    for pi, p_val in enumerate(u_params.values()):
+        out += str(p_val)
+        if pi < len(u_params) - 1:
+            out += ", "
+    out += ")$"
+    return out
 
 
 def plot_us(us, k_max, save_path, xscale='linear', k_min=1):
@@ -255,5 +289,8 @@ def plot_us(us, k_max, save_path, xscale='linear', k_min=1):
     plt.clf()
 
 
+def ensure_directory(directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
-    
+
