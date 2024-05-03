@@ -11,11 +11,6 @@ wget https://www.cs.ubc.ca/~drgraham/datasets/dataset_icar.zip
 unzip dataset_icar.zip -d icar/
 ```
 
-Set up directories: 
-```
-mkdir dat img
-```
-
 ## The Case of Few Configurations -- Comparison with UP
 
 Compare CUUB to UP and the Naive procedure by duplicating the experiments from [Graham et al., 2023](https://arxiv.org/abs/2310.20401) (Figure ...), and also plotting the total time spent on each configuration as a function of its utility:
