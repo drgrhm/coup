@@ -13,7 +13,7 @@ unzip dataset_icar.zip -d icar/
 
 ## Generating plots
 
-Generate the plots for Figures 1, 2 and 6 comparing OUP with UP [Graham, Leyton-Brown and Roughgarden 2023](https://arxiv.org/abs/2310.20401).
+Generate the plots for Figures 1, 2 and 6 comparing OUP with UP.
 ```
 python up_experiment.py [minisat | cplex_rcw | cplex_region]
 ```
