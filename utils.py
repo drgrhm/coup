@@ -13,12 +13,15 @@ color_schemes = [['#377eb8', '#629fd0', '#9dc3e2'],
                 ['#984ea3', '#bd87c5', '#d9bade']]
                 # ['#999999', '#bfbfbf', '#d9d9d9']]
 
-fs = {'axis': 15,
-      'title': 20}
+fs = {'axis': 22,
+      'title': 25,
+      'ticks': 20,
+      'legend': 15}
 
 lw = {'main': 5,
       'small': 2,
-      'tiny': .5}
+      'tiny': .5,
+      'fat': 8}
 
 day_in_s = 60 * 60 * 24
 
