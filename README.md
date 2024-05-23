@@ -13,9 +13,9 @@ unzip dataset_icar.zip -d icar/
 
 ## The Case of Few Configurations -- Comparison with UP
 
-Compare CUUB to UP and the Naive procedure by duplicating the experiments from [Graham et al., 2023](https://arxiv.org/abs/2310.20401) (Figure ...), and also plotting the total time spent on each configuration as a function of its utility:
+Generate the plots for Figures ... comparing OUP with UP [Graham et al., 2023](https://arxiv.org/abs/2310.20401).
 ```
-python up_experiment.py [minisat | cplex_rcw | cplex_region] [seed = {9858}]
+python up_experiment.py [minisat | cplex_rcw | cplex_region]
 ```
 
 
@@ -23,7 +23,7 @@ python up_experiment.py [minisat | cplex_rcw | cplex_region] [seed = {9858}]
 
 Compare the many-configuration version of to the few-configuration version (Figure ...):
 ```
-python many_experiment.py [minisat | cplex_rcw | cplex_region | synthetic] [seed = {9858}]
+python many_experiment.py [minisat | cplex_rcw | cplex_region | synthetic]
 ```
 
 ## Synthetic Data 
