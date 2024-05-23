@@ -1,4 +1,4 @@
-# COUP - Continuous, Optimistic Utilitarian Configuration
+# COUP - Continuous Optimistic Utilitarian Configuration
 
 Code to reproduce experiments from the paper *Utilitarian Algorithm Configuration for Infinite Parameter Spaces* found [here](...).
 
