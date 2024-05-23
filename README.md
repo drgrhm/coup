@@ -1,4 +1,4 @@
-# COUP -- Continuous, Optimistic Utilitarian Configuration
+# COUP - Continuous, Optimistic Utilitarian Configuration
 
 Code to reproduce experiments from the paper [TODO](...).
 
@@ -11,18 +11,26 @@ wget https://www.cs.ubc.ca/~drgraham/datasets/dataset_icar.zip
 unzip dataset_icar.zip -d icar/
 ```
 
-## The Case of Few Configurations: OUP
+## Generating plots
 
-Generate the plots for Figures ... comparing OUP with UP [Graham et al., 2023](https://arxiv.org/abs/2310.20401).
+Generate the plots for Figures 1, 2 and 6 comparing OUP with UP [Graham et al., 2023](https://arxiv.org/abs/2310.20401).
 ```
 python up_experiment.py [minisat | cplex_rcw | cplex_region]
 ```
 
-
-## The Case of Many ConfigurationsL COUP
-
-Compare the many-configuration version of to the few-configuration version (Figure ...):
+Generate the plots for Figure 3, comparing COUP with OUP.
 ```
-python many_experiment.py [minisat | cplex_rcw | cplex_region | synthetic]
+python many_experiment.py [minisat | cplex_rcw | cplex_region]
 ```
+
+Generate the plots for Figure 4, showing the explorative power of COUP.
+```
+python explore_experiment.py [minisat | cplex_rcw | cplex_region]
+```
+
+Generate the plots for Figure 5, showing the improvement of the new doubling condition. 
+```
+python dubcond_experiment.py [minisat | cplex_rcw | cplex_region]
+```
+
 
