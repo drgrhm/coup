@@ -1,4 +1,4 @@
-# COUP --- Continuous, Optimistic Utilitarian Configuration
+# COUP -- Continuous, Optimistic Utilitarian Configuration
 
 Code to reproduce experiments from the paper [TODO](...).
 
@@ -24,12 +24,5 @@ python up_experiment.py [minisat | cplex_rcw | cplex_region]
 Compare the many-configuration version of to the few-configuration version (Figure ...):
 ```
 python many_experiment.py [minisat | cplex_rcw | cplex_region | synthetic]
-```
-
-## Synthetic Data 
-
-....
-```
-python synthetic_demo.py
 ```
 
