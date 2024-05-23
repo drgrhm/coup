@@ -1,4 +1,4 @@
-# cuub
+# COUP
 
 Code to reproduce experiments from the paper [TODO](...).
 
