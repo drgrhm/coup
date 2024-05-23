@@ -1,6 +1,6 @@
 # COUP - Continuous, Optimistic Utilitarian Configuration
 
-Code to reproduce experiments from the paper [TODO](...).
+Code to reproduce experiments from the paper *Utilitarian Algorithm Configuration for Infinite Parameter Spaces* [Graham and Leyton-Brown, 2024] found [here](...).
 
 ## Setup
 
