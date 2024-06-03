@@ -41,12 +41,11 @@ m_max = env.get_num_instances()
 
 
 scenario = {
-    'eps': {'epsilon_fn': lambda p: math.exp(- p / 3), 'gamma_fn': lambda p: math.exp(- p / 30), 'label': "$\\epsilon$ focus", 'color': colors[2]},
-    'gam': {'epsilon_fn': lambda p: math.exp(- p / 30), 'gamma_fn': lambda p: math.exp(- p / 3), 'label': "$\\gamma$ focus", 'color': colors[3]},                
-    'bal': {'epsilon_fn': lambda p: math.exp(- p / 5), 'gamma_fn': lambda p: math.exp(- p / 5), 'label': "balanced", 'color': colors[7]},
+    'gam': {'epsilon_fn': lambda p: math.exp(- p / 30), 'gamma_fn': lambda p: math.exp(- p / 3), 'label': "$\\gamma$ focus", 'color': colors[3]},
     'etg': {'epsilon_fn': lambda p: math.exp(- p ** 3 / 300), 'gamma_fn': lambda p: math.exp(- p ** 2 / 30), 'label': "$\\gamma$ then $\\epsilon$", 'color': colors[5]},
+    'bal': {'epsilon_fn': lambda p: math.exp(- p / 5), 'gamma_fn': lambda p: math.exp(- p / 5), 'label': "balanced", 'color': colors[7]},
+    'eps': {'epsilon_fn': lambda p: math.exp(- p / 3), 'gamma_fn': lambda p: math.exp(- p / 30), 'label': "$\\epsilon$ focus", 'color': colors[2]},
     }
-
 
 data = {}
 for s, scen in scenario.items():
