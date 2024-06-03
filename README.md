@@ -1,6 +1,6 @@
 # COUP - Continuous Optimistic Utilitarian Configuration
 
-Code to reproduce experiments from the paper *Utilitarian Algorithm Configuration for Infinite Parameter Spaces*, available [here](...).
+COUP is a utilitarian algorithm configuration procedure described in the paper *Utilitarian Algorithm Configuration for Infinite Parameter Spaces*, available [here](https://arxiv.org/abs/2405.18246). The following will reproduce the paper's experiments. 
 
 ## Setup
 
