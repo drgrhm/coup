@@ -10,7 +10,6 @@ def _alpha(m, k, n, delta):
     return math.sqrt(math.log(4 * 2.705808 * n * m**2 * (math.log2(k) + 1)**2 / delta) / 2 / m)
 
 
-
 def oup_message(r, i, i_star, i_prime, epsilon_star, UCB, LCB, k, m, env):
     print_string = ("oup: iteration {}, "
                     "i={:6}, "
@@ -146,9 +145,8 @@ def oup(env, u, delta, k0=1, epsilon_min=0, n=None, m_max=float('inf'), save_mod
 
 
 
-def alpha_p(p, m, k, delta):
-    _n_p = 2**p * math.log(math.pi**2 * p**2 / 3 / delta)
-    return math.sqrt(math.log(36 * p**2 * _n_p * m**2 * (math.log2(k) + 1)**2 / delta) / 2 / m)
+def alpha_p(p, n, m, k, delta):
+    return math.sqrt(math.log(36 * p**2 * n * m**2 * (math.log2(k) + 1)**2 / delta) / 2 / m)
 
 
 def coup_message(p, r, n_p, i_star, epsilon_star, max_ucb, min_ucb, m, env):
@@ -205,8 +203,8 @@ def coup(env, u, delta, epsilon_fn, gamma_fn, k0=1, max_phases=float('inf'), n_m
 
         for i in range(ns[-1]): # updates for existing configs
             if m[i] >= 1: # if we've run i before
-                UCB[i] = U_hat[i] + (1 - u(k[i])) * alpha_p(p, m[i], k[i], delta)
-                LCB[i] = U_hat[i] - alpha_p(p, m[i], k[i], delta) - u(k[i]) * (1 - F_hat[i])
+                UCB[i] = U_hat[i] + (1 - u(k[i])) * alpha_p(p, n_p, m[i], k[i], delta)
+                LCB[i] = U_hat[i] - alpha_p(p, n_p, m[i], k[i], delta) - u(k[i]) * (1 - F_hat[i])
 
         for i in range(ns[-1], n_p): # initializations for new configs
             F_hat[i] = 0
@@ -229,7 +227,7 @@ def coup(env, u, delta, epsilon_fn, gamma_fn, k0=1, max_phases=float('inf'), n_m
                 print("\nWARNING: coup reached m_max={} samples at round r={} in phase p={}. returning.\n".format(m_max, r, p))
                 return out
 
-            alpha_i = alpha_p(p, m[i], k[i], delta)
+            alpha_i = alpha_p(p, n_p, m[i], k[i], delta)
             
             if doubling_condition == "old":
                 dubcond = 2 * alpha_i <= u(k[i]) *(1 - F_hat[i])
@@ -246,7 +244,7 @@ def coup(env, u, delta, epsilon_fn, gamma_fn, k0=1, max_phases=float('inf'), n_m
                 F_hat[i] = ((m[i] - 1) * F_hat[i] + (1 if runtime < k[i] else 0)) / m[i]
                 U_hat[i] = ((m[i] - 1) * U_hat[i] + u(runtime)) / m[i]
 
-            alpha_i = alpha_p(p, m[i], k[i], delta)
+            alpha_i = alpha_p(p, n_p, m[i], k[i], delta)
             UCB[i] = min(U_hat[i] + (1 - u(k[i])) * alpha_i, UCB[i])
             LCB[i] = max(U_hat[i] - alpha_i - u(k[i]) * (1 - F_hat[i]), LCB[i])
 
