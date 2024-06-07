@@ -203,8 +203,8 @@ def coup(env, u, delta, epsilon_fn, gamma_fn, k0=1, max_phases=float('inf'), n_m
 
         for i in range(ns[-1]): # updates for existing configs
             if m[i] >= 1: # if we've run i before
-                UCB[i] = U_hat[i] + (1 - u(k[i])) * alpha_p(p, n_p, m[i], k[i], delta)
-                LCB[i] = U_hat[i] - alpha_p(p, n_p, m[i], k[i], delta) - u(k[i]) * (1 - F_hat[i])
+                UCB[i] = min(U_hat[i] + (1 - u(k[i])) * alpha_p(p, n_p, m[i], k[i], delta), UCB[i])
+                LCB[i] = max(U_hat[i] - alpha_p(p, n_p, m[i], k[i], delta) - u(k[i]) * (1 - F_hat[i]), LCB[i])
 
         for i in range(ns[-1], n_p): # initializations for new configs
             F_hat[i] = 0
