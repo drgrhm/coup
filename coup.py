@@ -96,7 +96,7 @@ def oup(env, u, delta, k0=1, epsilon_min=0, n=None, m_max=float('inf'), save_mod
             F_hat[i] = sum([1 if t < k[i] else 0 for t in runtimes]) / m[i]
             U_hat[i] = sum(u(t) for t in runtimes) / m[i]
         else: # otherwise, just run the next instance
-            runtime = env.run(i, m[i], k[i])
+            runtime = env.run(i, m[i] - 1, k[i])
             F_hat[i] = ((m[i] - 1) * F_hat[i] + (1 if runtime < k[i] else 0)) / m[i]
             U_hat[i] = ((m[i] - 1) * U_hat[i] + u(runtime)) / m[i]
         
@@ -240,7 +240,7 @@ def coup(env, u, delta, epsilon_fn, gamma_fn, k0=1, max_phases=float('inf'), n_m
                 F_hat[i] = sum([1 if t < k[i] else 0 for t in runtimes]) / m[i]
                 U_hat[i] = sum(u(t) for t in runtimes) / m[i]
             else: # otherwise, just run the next instance
-                runtime = env.run(i, m[i], k[i])
+                runtime = env.run(i, m[i] - 1, k[i])
                 F_hat[i] = ((m[i] - 1) * F_hat[i] + (1 if runtime < k[i] else 0)) / m[i]
                 U_hat[i] = ((m[i] - 1) * U_hat[i] + u(runtime)) / m[i]
 
