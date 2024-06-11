@@ -129,14 +129,14 @@ for u in utility_functions:
             times_up.append(data[u_str]['up']['total_times'][i])
             curr += 1
 
-    n_epsilons_cuub = len(data[u_str]['oup']['epsilon_stars'])
-    times_cuub = []
+    n_epsilons_coup = len(data[u_str]['oup']['epsilon_stars'])
+    times_coup = []
     curr = 0
-    for i in range(n_epsilons_cuub):
+    for i in range(n_epsilons_coup):
         if curr >= len(naive_epsilons):
             break
         if data[u_str]['oup']['epsilon_stars'][i] <= naive_epsilons[curr]:
-            times_cuub.append(data[u_str]['oup']['total_times'][i])
+            times_coup.append(data[u_str]['oup']['total_times'][i])
             curr += 1
 
     if u[0] is u_ll:
@@ -144,7 +144,7 @@ for u in utility_functions:
         ys = [data[u_str]['naive'][naive_ks[1]][eps]['total_time'] for eps in data[u_str]['naive'][naive_ks[1]].keys()]
         plt.plot(xs, ys, c=colors[4], linewidth=lw['fat'], label="Naive($\\kappa$={})".format(naive_ks[1]))
         plt.plot(naive_epsilons, times_up, c=colors[5], linewidth=lw['fat'], label="UP")
-        plt.plot(naive_epsilons, times_cuub, c=colors[2], linewidth=lw['fat'], label="OUP")
+        plt.plot(naive_epsilons, times_coup, c=colors[2], linewidth=lw['fat'], label="OUP")
         plt.legend(fontsize=fs['legend'])
         plt.xlabel("$\\epsilon$", fontsize=fs['axis'])
         plt.ylabel("Total Runtime (CPU days)", fontsize=fs['axis'])
@@ -161,7 +161,7 @@ for u in utility_functions:
             ys = [data[u_str]['naive'][naive_k][eps]['total_time'] for eps in data[u_str]['naive'][naive_k].keys()]
             plt.plot(xs, ys, c=colors[4], linewidth=lw['fat'], label="Naive($\\kappa$={})".format(naive_k))
             plt.plot(naive_epsilons, times_up, c=colors[5], linewidth=lw['fat'], label="UP")
-            plt.plot(naive_epsilons, times_cuub, c=colors[2], linewidth=lw['fat'], label="OUP")            
+            plt.plot(naive_epsilons, times_coup, c=colors[2], linewidth=lw['fat'], label="OUP")            
             plt.legend(fontsize=fs['legend'])
             plt.xlabel("$\\epsilon$", fontsize=fs['axis'])
             plt.ylabel("Total Runtime (CPU days)", fontsize=fs['axis'])
