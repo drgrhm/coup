@@ -149,7 +149,7 @@ def alpha_p(p, n, m, k, delta):
     return math.sqrt(math.log(36 * p**2 * n * m**2 * (math.log2(k) + 1)**2 / delta) / 2 / m)
 
 
-def coup_message(p, r, n_p, i_star, epsilon_star, max_ucb, min_ucb, m, env):
+def coup_message(p, r, n_p, i_star, epsilon_star, max_ucb, max_lcb, m, env):
 
     print_string = ("coup: phase p={}. "
                     "r={}. "
@@ -168,7 +168,7 @@ def coup_message(p, r, n_p, i_star, epsilon_star, max_ucb, min_ucb, m, env):
                                        i_star, 
                                        epsilon_star, 
                                        max_ucb, 
-                                       min_ucb,
+                                       max_lcb,
                                        m[min(m, key=m.get)],
                                        m[max(m, key=m.get)],
                                        env.get_time_spent_running_all() / day_in_s)    
