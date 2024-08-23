@@ -1,84 +1,61 @@
 import math
-import numpy as np   
+import numpy as np
 
-from utils import *
+from utils import day_in_s
 
 
-def _alpha(m, k, n, delta):
+def oup_alpha(m, k, n, delta):
     if m == 0:
         return 1
-    return math.sqrt(math.log(4 * 2.705808 * n * m**2 * (math.log2(k) + 1)**2 / delta) / 2 / m)
+    return min(math.sqrt(math.log(4 * 2.705808 * n * m**2 * (math.log2(k) + 1)**2 / delta) / 2 / m), 1)
 
 
-def oup_message(r, i, i_star, i_prime, epsilon_star, UCB, LCB, k, m, env):
-    print_string = ("oup: iteration {}, "
-                    "i={:6}, "
-                    "i_star={}, "
-                    "epsilon_star={:.4f}, "
-                    "ucb_max={:.4f}, "
-                    "lcb_max={:.4f}, "
-                    "k_min={}, "
-                    "k_max={}, "
-                    "m_min={}, "
-                    "m_max={}, "
-                    "total_time={:.8f}")
-    print_string = print_string.format(r, 
-                                       i, 
-                                       i_star, 
-                                       epsilon_star, 
-                                       UCB[i_prime], 
-                                       LCB[i_star], 
-                                       k[min(k, key=k.get)], 
-                                       k[max(k, key=k.get)], 
-                                       m[min(m, key=m.get)], 
-                                       m[max(m, key=m.get)], 
-                                       env.get_time_spent_running_all() / day_in_s)
-    return print_string
+def oup_message(r, i, i_star, i_prime, epsilon_star, UCB, LCB, m, k, env):
+    return f"oup: iteration {r}, i={i:5}, i_star={i_star:5}, epsilon_star={epsilon_star:.4f}, ucb=[{np.min(UCB):.4f}, {UCB[i_prime]:.4f}], lcb=[{np.min(LCB):.4f}, {LCB[i_star]:.4f}], m=[{np.min(m)}, {np.max(m)}], k=[{np.min(k)}, {np.max(k)}], total_time={env.total_time / day_in_s:.8f}"
 
 
-def oup(env, u, delta, k0=1, epsilon_min=0, n=None, m_max=float('inf'), save_mod=1000, doubling_condition="new"):
+def update_output(out, **kwargs):
+    out['i_stars'].append(kwargs['i_star'])
+    out['epsilon_stars'].append(kwargs['epsilon_star'])
+    out['total_time'].append(kwargs['total_time'])
+    out['total_times'].append(kwargs['total_times'])
+
+
+def oup(env, u, delta, k0=1, epsilon_min=0, n=None, m_max=float('inf'), max_time=float("inf"), doubling_condition="new", improved_tie_breaking=False, save_mod=500, print_mod=10000):
     """ Optimistic Utilitarian Procrastination """
 
     if n is None:
-        n = env.get_num_configs()
+        n = env.num_configs
 
     print("oup: running with {} doubling condition on {} configs ... ".format(doubling_condition, n))
 
     I = dict([(i, None) for i in range(n)])
-    F_hat = dict([(i, 0) for i in range(n)])
-    U_hat = dict([(i, 0) for i in range(n)])
+    F_hat = np.zeros(n)
+    U_hat = np.zeros(n)
     UCB = np.ones(n)
     LCB = np.zeros(n)
-    m = dict([(i, 0) for i in range(n)])
-    k = dict([(i, k0) for i in range(n)])
-    alpha = dict([(i, 1) for i in range(n)])
-    
-    out = {'i_stars': [],
-           'epsilon_stars': [],
-           'num_configs_remaining': [],
-           'total_times': [],
-           'total_times_by_config': [],
-           'max_k': [],
-           'min_k': [],
-           }
-
+    m = np.zeros(n, dtype=np.int64)
+    k = np.ones(n) * k0
+    alpha = np.ones(n)
     epsilon_star = 1
     i_star_last = -1
     r = 0
+    out = {'i_stars': [], 'epsilon_stars': [], 'total_time': [], 'total_times': []}
+
     while epsilon_star > epsilon_min:
         
+        if env.total_time >= max_time:
+            update_output(out, i_star=i_star, epsilon_star=epsilon_star, total_time=env.total_time / day_in_s, total_times=env.total_times)
+            print(oup_message(r, i, i_star, i_prime, epsilon_star, UCB, LCB, m, k, env) + " TOTAL TIME REACHED")
+            return out
+
         i = np.argmax(UCB)
         m[i] += 1 
         if m[i] >= m_max:
             if epsilon_min == 0: # not targeting a specific epsilon
                 print("\nWARNING oup ran out of instances at m={}. returning current results\n".format(m[i]))
-                out['i_stars'].append(i_star)
-                out['epsilon_stars'].append(epsilon_star)
-                out['total_times'].append(env.get_time_spent_running_all() / day_in_s)
-                out['total_times_by_config'].append(env.get_total_time_per_config())
-                out['max_k'].append(k[max(k, key=k.get)])
-                out['min_k'].append(k[min(k, key=k.get)])
-                print("oup: iteration {}, i={:6}, i_star={}, epsilon_star={:.4f}, max_ucb={:.4f}, max_lcb={:.4f}, k_min={}, k_max={}, total_time={:.4f}, num_configs_remaining={}. FINISHED".format(r, i, i_star, epsilon_star, UCB[i_prime], LCB[i_star], k[min(k, key=k.get)], k[max(k, key=k.get)], env.get_time_spent_running_all() / day_in_s, len(I)))
+                update_output(out, i_star=i_star, epsilon_star=epsilon_star, total_time=env.total_time / day_in_s, total_times=env.total_times)
+                print(oup_message(r, i, i_star, i_prime, epsilon_star, UCB, LCB, m, k, env) + " MAX INSTANCES REACHED")
                 return out
 
             else: # targeting specific epsilon
@@ -92,7 +69,7 @@ def oup(env, u, delta, k0=1, epsilon_min=0, n=None, m_max=float('inf'), save_mod
 
         if dubcond: # if its time to double k[i]
             k[i] = 2 * k[i]
-            runtimes = [env.run(i, j, k[i]) for j in range(m[i])] 
+            runtimes = [env.run(i, j, k[i]) for j in range(m[i])]
             F_hat[i] = sum([1 if t < k[i] else 0 for t in runtimes]) / m[i]
             U_hat[i] = sum(u(t) for t in runtimes) / m[i]
         else: # otherwise, just run the next instance
@@ -100,11 +77,14 @@ def oup(env, u, delta, k0=1, epsilon_min=0, n=None, m_max=float('inf'), save_mod
             F_hat[i] = ((m[i] - 1) * F_hat[i] + (1 if runtime < k[i] else 0)) / m[i]
             U_hat[i] = ((m[i] - 1) * U_hat[i] + u(runtime)) / m[i]
         
-        alpha[i] = _alpha(m[i], k[i], n, delta)
+        alpha[i] = oup_alpha(m[i], k[i], n, delta)
         UCB[i] = min(U_hat[i] + (1 - u(k[i])) * alpha[i], UCB[i])
         LCB[i] = max(U_hat[i] - alpha[i] - u(k[i]) * (1 - F_hat[i]), LCB[i])
 
-        i_star = np.argmax(LCB) # try to eliminate configurations against LCB[i_star]:
+        if improved_tie_breaking:
+            i_star = choose_max(LCB, U_hat)
+        else:
+            i_star = np.argmax(LCB)
 
         # a faster check for suboptimals:
         if i_star == i_star_last and i_star != i: # LCB[i_star] has not changed since last round 
@@ -124,62 +104,29 @@ def oup(env, u, delta, k0=1, epsilon_min=0, n=None, m_max=float('inf'), save_mod
         epsilon_star = UCB[i_prime] - LCB[i_star]
 
         if r % save_mod == 0:
-            out['i_stars'].append(i_star)
-            out['epsilon_stars'].append(epsilon_star)
-            out['total_times'].append(env.get_time_spent_running_all() / day_in_s)
-            out['total_times_by_config'].append(env.get_total_time_per_config())
-            out['max_k'].append(k[max(k, key=k.get)])
-            out['min_k'].append(k[min(k, key=k.get)])
-        if r % 5000 == 0:            
-            print(oup_message(r, i, i_star, i_prime, epsilon_star, UCB, LCB, k, m, env))
+            update_output(out, i_star=i_star, epsilon_star=epsilon_star, total_time=env.total_time / day_in_s, total_times=env.total_times)
+        if r % print_mod == 0:            
+            print(oup_message(r, i, i_star, i_prime, epsilon_star, UCB, LCB, m, k, env))
         r += 1
 
-    out['i_stars'].append(i_star)
-    out['epsilon_stars'].append(epsilon_star)
-    out['total_times'].append(env.get_time_spent_running_all() / day_in_s)
-    out['total_times_by_config'].append(env.get_total_time_per_config())
-    out['max_k'].append(k[max(k, key=k.get)])
-    out['min_k'].append(k[min(k, key=k.get)])
-    print(oup_message(r, i, i_star, i_prime, epsilon_star, UCB, LCB, k, m, env) + " FINISHED")
+    update_output(out, i_star=i_star, epsilon_star=epsilon_star, total_time=env.total_time / day_in_s, total_times=env.total_times)
+    print(oup_message(r, i, i_star, i_prime, epsilon_star, UCB, LCB, m, k, env) + " FINISHED")
     return out
-
 
 
 def alpha_p(p, n, m, k, delta):
     return math.sqrt(math.log(36 * p**2 * n * m**2 * (math.log2(k) + 1)**2 / delta) / 2 / m)
 
 
-def coup_message(p, r, n_p, i_star, epsilon_star, max_ucb, max_lcb, m, env):
-
-    print_string = ("coup: phase p={}. "
-                    "r={}. "
-                    "n_p={} configs sampled. "
-                    "i_star={}, "
-                    "epsilon_star={:.4f}, "
-                    "max_ucb={:.4f}, "
-                    "max_lcb={:.4f}, "
-                    "min_m={}, "
-                    "max_m={}, "
-                    "total_time={:.4f}")
-
-    print_string = print_string.format(p, 
-                                       r, 
-                                       n_p, 
-                                       i_star, 
-                                       epsilon_star, 
-                                       max_ucb, 
-                                       max_lcb,
-                                       m[min(m, key=m.get)],
-                                       m[max(m, key=m.get)],
-                                       env.get_time_spent_running_all() / day_in_s)    
-    return print_string
+def coup_message(p, r, n_p, i_star, epsilon_star, UCB, LCB, m, k, env):
+    return f"coup: phase p={p}. r={r}. n_p={n_p} configs sampled. i_star={i_star:5}, epsilon_star={epsilon_star:.4f}, ucb=[{np.min(UCB):.4f}, {np.max(UCB):.4f}], lcb=[{np.min(LCB):.4f}, {np.max(LCB):.4f}], m=[{min(m.values())}, {max(m.values())}], k=[{min(k.values())}, {max(k.values())}], total_time={env.total_time / day_in_s:.8f}"
 
 
-def coup(env, u, delta, epsilon_fn, gamma_fn, k0=1, max_phases=float('inf'), n_max=float('inf'), m_max=float('inf'), doubling_condition="new"):
+def coup(env, u, delta, epsilon_fn, gamma_fn, k0=1, max_phases=float('inf'), n_max=float('inf'), m_max=float('inf'), save_mod=500, print_mod=10000, doubling_condition="new", improved_tie_breaking=False):
     """ Continuous, Optimistic Utilitarian Procrastination """
 
     F_hat = {}
-    U_hat = {}
+    U_hat = []
     m = {}
     k = {}
     ns = [0] # number of configs per phase 
@@ -187,7 +134,8 @@ def coup(env, u, delta, epsilon_fn, gamma_fn, k0=1, max_phases=float('inf'), n_m
     out = {'phase': [],
            'i_stars': [],
            'epsilon_stars': [],
-           'max_num_instances': []
+           'total_time': [],
+           'total_times': []
            }
 
     p = 1 # phase counter 
@@ -200,6 +148,7 @@ def coup(env, u, delta, epsilon_fn, gamma_fn, k0=1, max_phases=float('inf'), n_m
 
         UCB = np.ones(n_p)
         LCB = np.zeros(n_p)
+        U_hat = np.concatenate((U_hat, np.zeros(n_p - ns[-1])))
 
         for i in range(ns[-1]): # updates for existing configs
             if m[i] >= 1: # if we've run i before
@@ -208,7 +157,6 @@ def coup(env, u, delta, epsilon_fn, gamma_fn, k0=1, max_phases=float('inf'), n_m
 
         for i in range(ns[-1], n_p): # initializations for new configs
             F_hat[i] = 0
-            U_hat[i] = 0
             m[i] = 0
             k[i] = k0
             
@@ -222,9 +170,12 @@ def coup(env, u, delta, epsilon_fn, gamma_fn, k0=1, max_phases=float('inf'), n_m
         while UCB[i_prime] - LCB[i_star] >= epsilon_fn(p):
             
             i = np.argmax(UCB)
+
             m[i] += 1
             if m[i] >= m_max:
                 print("\nWARNING: coup reached m_max={} samples at round r={} in phase p={}. returning.\n".format(m_max, r, p))
+                update_output(out, i_star=i_star, epsilon_star=epsilon_star, total_time=env.total_time / day_in_s, total_times=env.total_times)
+                print(coup_message(p, r, n_p, i_star, epsilon_star, UCB, LCB, m, k, env) + " RAN OUT OF INSTANCES")
                 return out
 
             alpha_i = alpha_p(p, n_p, m[i], k[i], delta)
@@ -248,29 +199,29 @@ def coup(env, u, delta, epsilon_fn, gamma_fn, k0=1, max_phases=float('inf'), n_m
             UCB[i] = min(U_hat[i] + (1 - u(k[i])) * alpha_i, UCB[i])
             LCB[i] = max(U_hat[i] - alpha_i - u(k[i]) * (1 - F_hat[i]), LCB[i])
 
-            i_star = np.argmax(LCB)
+            if improved_tie_breaking:
+                i_star = choose_max(LCB, U_hat)
+            else:
+                i_star = np.argmax(LCB)
+
             i_prime = np.argmax(UCB)
             epsilon_star = UCB[i_prime] - LCB[i_star]
 
-            # if r % save_mod == 0:
-            #     out['i_stars'].append(i_star)
-            #     out['epsilon_stars'].append(epsilon_star)
-            #     out['max_num_instances'].append(max(m, key=m.get))
-            #     out['total_times'].append(env.get_time_spent_running_all() / day_in_s)
-            #     out['total_times_by_config'].append(np.copy(env._total_time))
+            if r % save_mod == 0:
+                update_output(out, i_star=i_star, epsilon_star=epsilon_star, total_time=env.total_time / day_in_s, total_times=env.total_times)
 
-            if r % 10000 == 0:
-                print(coup_message(p, r, n_p, i_star, epsilon_star, UCB[i_prime], LCB[i_star], m, env))
+            if r % print_mod == 0:
+                print(coup_message(p, r, n_p, i_star, epsilon_star, UCB, LCB, m, k, env))
             r += 1
-        print(coup_message(p, r, n_p, i_star, epsilon_star, UCB[i_prime], LCB[i_star], m, env) + ". PHASE {} COMPLETE.".format(p))
+        print(coup_message(p, r, n_p, i_star, epsilon_star, UCB, LCB, m, k, env) + ". PHASE {} COMPLETE.".format(p))
 
+        update_output(out, i_star=i_star, epsilon_star=epsilon_star, total_time=env.total_time / day_in_s, total_times=env.total_times)
         out['phase'].append({
-            'total_time': env.get_time_spent_running_all() / day_in_s,
             'num_configs': n_p,
-            'epsilon': epsilon_star,
             'i_star': i_star,
-            'max_num_instances': m[max(m, key=m.get)],
-            'time_per_config': env.get_total_time_per_config(),
+            'epsilon': epsilon_star,
+            'total_time': env.total_time / day_in_s,
+            'total_times': env.total_times,
             })
 
         p += 1
