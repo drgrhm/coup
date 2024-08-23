@@ -33,4 +33,9 @@ Generate the plots for Figure 5, showing the improvement of the new doubling con
 python dubcond_experiment.py [minisat | cplex_rcw | cplex_region]
 ```
 
+Generate the plots for Figure ..., showing the percentage gap between the incumbent configuration and the best configuration in the dataset. Comparisson is between UP, OUP, COUP and [AC-Band](https://arxiv.org/abs/2212.00333). Code for AC-Band comes from [this repo](https://github.com/DOTBielefeld/ACBand).
+```
+python gap_experiment.py [minisat | cplex_rcw | cplex_region]
+```
+
 
