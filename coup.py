@@ -1,7 +1,7 @@
 import math
 import numpy as np
 
-from utils import day_in_s
+from utils import day_in_s, choose_max
 
 
 def oup_alpha(m, k, n, delta):
