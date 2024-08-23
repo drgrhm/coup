@@ -42,7 +42,7 @@ if __name__ == "__main__":
     naive_epsilons = np.linspace(.25, .1, 6) # make sure decreasing 
     naive_ks = [60, 300, 600]
 
-    data_save_path = "dat/up_experiment_{}_{}_{}.p".format(args.dataset, args.seed, args.dataseed)
+    data_save_path = "dat/up_experiment_{}_{}_{}.p".format(args.seed, args.dataseed, args.dataset)
 
     try: 
         data = pickle.load(open(data_save_path, 'rb'))
