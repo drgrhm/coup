@@ -46,24 +46,28 @@ def arm_elimination(env, active_confs, num_winners, instance_set, u=None):
             time_taken = env.run(i=configuration, k=900, j=instance) # Note: hardcoded k=900 may be a bug. The max time for the cplex datasets is 10000...
             instance_results[configuration] = time_taken
 
+
             ### env accounting. Maintain the correct runtime accounting, assuming parallel runs are all stopped as soon as one completes
             env._completed[configuration][instance] = False # Only the winner completes its run
-            env._total_time[configuration] -= time_taken # Each config is only run until the winner finishes 
+            env._total_times[configuration] -= time_taken # Each config is only run until the winner finishes 
             ###
             
+
         winner_on_instance = min(instance_results, key=instance_results.get)
         if u is None: # using the default evaluation criterion
             feedback_store[winner_on_instance] = feedback_store[winner_on_instance] + 1
         cpu_rt = cpu_rt + (instance_results[winner_on_instance] * len(active_confs))
         wall_clock_rt = wall_clock_rt + instance_results[winner_on_instance]
 
+
         ### env accounting 
         env._completed[winner_on_instance][instance] = True # Only the winner completes its run
         for configuration in active_confs:
-            env._total_time[configuration] += instance_results[winner_on_instance] # Each config is only run until the winner finishes 
+            env._total_times[configuration] += instance_results[winner_on_instance] # Each config is only run until the winner finishes 
             if u is not None: # using u instead of default criterion
                 feedback_store[configuration] += u(instance_results[winner_on_instance])
         ###
+    
     
     ### using u instead of default criterion
     if u is not None:
