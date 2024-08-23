@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     data = {}
     for s, scen in scenario.items():
-        data_save_path = "dat/explore_experiment_{}_{}_{}_{}_{}.p".format(args.seed, args.dataseed, u_str, args.dataset, scen)
+        data_save_path = "dat/explore_experiment_{}_{}_{}_{}_{}.p".format(args.seed, args.dataseed, u_str, args.dataset, s)
         print("Scenario {}, {} ...".format(s, scen['label']))
         try:
             data[s] = pickle.load(open(data_save_path, 'rb'))
