@@ -13,7 +13,7 @@ unzip dataset_icar.zip -d icar/
 
 ## Generating plots
 
-Generate the plots for Figures 1, 2 and 6 comparing OUP with UP:
+Generate the plots for Figures 1 and 2 comparing OUP with UP:
 ```
 python up_experiment.py [minisat | cplex_rcw | cplex_region]
 ```
@@ -28,14 +28,16 @@ Generate the plots for Figure 4, showing the explorative power of COUP:
 python explore_experiment.py [minisat | cplex_rcw | cplex_region]
 ```
 
-Generate the plots for Figure 5, showing the improvement of the new doubling condition:
+Generate the plots for Figure 5 and 7, showing the percentage gap between the incumbent configuration and the best configuration in the dataset. Comparisson is between OUP, COUP and [AC-Band](https://arxiv.org/abs/2212.00333). Code for AC-Band comes from [this repo](https://github.com/DOTBielefeld/ACBand): ..
+```
+python gap_experiment.py [minisat | cplex_rcw | cplex_region]
+```
+
+Generate the plots for Figure 6, showing the improvement of the new doubling condition:
 ```
 python dubcond_experiment.py [minisat | cplex_rcw | cplex_region]
 ```
 
-Generate the plots for Figure ..., showing the percentage gap between the incumbent configuration and the best configuration in the dataset. Comparisson is between UP, OUP, COUP and [AC-Band](https://arxiv.org/abs/2212.00333). Code for AC-Band comes from [this repo](https://github.com/DOTBielefeld/ACBand).
-```
-python gap_experiment.py [minisat | cplex_rcw | cplex_region]
-```
+
 
 
