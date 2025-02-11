@@ -1,5 +1,5 @@
 
-# Code taken from https://github.com/DOTBielefeld/ACBand
+""" Code taken from https://github.com/DOTBielefeld/ACBand """
 
 import numpy as np
 import math
