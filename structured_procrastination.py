@@ -1,3 +1,5 @@
+""" Code taken from https://github.com/drgrhm/alg_config """
+
 import argparse
 import os
 import numpy as np
