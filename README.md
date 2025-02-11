@@ -28,7 +28,7 @@ Generate the plots for Figure 4, showing the explorative power of COUP:
 python explore_experiment.py [minisat | cplex_rcw | cplex_region]
 ```
 
-Generate the plots for Figure 5 and 7, showing the percentage gap between the incumbent configuration and the best configuration in the dataset. Comparisson is between OUP, COUP and [AC-Band](https://github.com/DOTBielefeld/ACBand)), Hyperband and Successive Halving (implemented here),  [ICAR](https://github.com/empennage98/icar), and [SPC](https://github.com/drgrhm/alg_config). 
+Generate the plots for Figure 5 and 7, showing the percentage gap between the incumbent configuration and the best configuration in the dataset:
 ```
 python gap_experiment.py [minisat | cplex_rcw | cplex_region]
 ```
