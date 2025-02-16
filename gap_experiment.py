@@ -221,16 +221,6 @@ if __name__ == "__main__":
         'acb': cmap(3),
         'acbu': cmap(1),
         }
-    # plot_colors = {
-    #     'coup': colors[3], 
-    #     'oup': colors[2], 
-    #     'spc': colors[4], # brown 
-    #     'icar': colors[8], #yellow
-    #     'sh': colors[0], # blue
-    #     'hb': colors[5], #purple
-    #     'acb': colors[7], # red
-    #     'acbu': colors[1], # orange
-    # }
 
     seeds = [520 + s for s in range(5)]
     data = {}
@@ -517,8 +507,6 @@ if __name__ == "__main__":
     plt.savefig("img/log/gap_{}_{}_{}_log.pdf".format(u_str, args.dataset, args.seed), bbox_inches='tight')
     plt.clf()
 
-
-
     print("Plotting runtime ...")
     for di, delta in enumerate(deltas):
         draw_plot_curve(data, 'oup', plot_colors['oup'], seeds, is_runtime=True, delta_i=di,  zorder=2)
@@ -574,46 +562,6 @@ if __name__ == "__main__":
         plt.savefig("img/log/gap_runtime_delta={}_{}_{}_{}_log.pdf".format(delta, u_str, args.dataset, args.seed), bbox_inches='tight')
 
         plt.clf()
-
-
-
-
-
-
-        # for si, seed in enumerate(seeds):
-        si = 0
-        seed = 520
-        plt.step(data[seed]['coupnm']['total_time'], data[seed]['coupnm']['epsilon_stars'], color=plot_colors['coup'], linewidth=(1 + si), label="COUP" if si == 0 else None)
-
-        for gi, gamma in enumerate(gammas):
-            for ei, epsilon in enumerate(epsilons):
-                for ci, config in enumerate(configs):
-                    plt.scatter(data[seed]['icar'][di][gi][ei][ci]['total_time'] / day_in_s, epsilon, color=plot_colors['icar'], label="ICAR" if si + gi + ei + ci == 0 else None)
-
-            # for di, delta in enumerate(deltas):
-
-        # plt.xticks(fontsize=fs['ticks'])
-        plt.xlabel("CPU time (days)", fontsize=fs['axis'])
-        plt.ylabel("$\\epsilon$ guaranteed", fontsize=fs['axis'])
-        plt.title("{}".format(args.dataset), fontsize=fs['title'])
-
-
-        plt.ylim(-0.01, 1.01)        
-
-        if args.dataset == "minisat":
-            plt.xlim(.03, plt.xlim()[-1])
-        elif args.dataset == "cplex_rcw":
-            plt.xlim(1, plt.xlim()[-1])
-        elif args.dataset == "cplex_region":
-            plt.xlim(1, plt.xlim()[-1])
-
-        plt.xscale('log')
-
-        plt.savefig("img/gap_epsilon_{}_{}_{}.pdf".format(u_str, args.dataset, args.seed), bbox_inches='tight')
-
-        plt.clf()
-
-
 
 
 
